@@ -12,9 +12,14 @@ const app = express()
 app.use(express.json())
 app.use(express.static(`${process.cwd()}/public`))
 
-app.use((req, res, next) => {
+app.use(/\/.*\/tours(\/.*)?$/, (req, res, next) => {
+    //console.log('Time:', new Date().toISOString())
     req.requestTime = new Date().toISOString();
+
     next();
+}, (req, res, next) => {
+    console.log('Request Type:', req.method)
+    next()
 });
 
 
@@ -25,7 +30,7 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter)
 
 
-app.post('/api/v2/tours', (req, res) => {
+/* app.post('/api/v1/tours', (req, res) => {
     if (Object.keys(req.body).length > 0) {
         const newId = tours[tours.length - 1].id + 1;
         const newTour = { id: newId, ...req.body };
@@ -41,6 +46,6 @@ app.post('/api/v2/tours', (req, res) => {
             message: "No data transmitted"
         });
     }
-})
+}) */
 
 export { app }

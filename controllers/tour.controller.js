@@ -1,5 +1,6 @@
 import { getAllTours, getTourById, createTour, updateTour } from '../services/tour.service.js';
 
+
 const checkBody = (req, res, next) => {
     if (!req.body.name || !req.body.price) {
 
@@ -11,10 +12,25 @@ const checkBody = (req, res, next) => {
     next();
 }
 
+const checkID = (req, res, next, val) => {
+    console.log(`Tour ID : ${val}`)
+    const tours = getAllTours();
+    if (req.params.id * 1 > tours.length) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'invalid ID'
+        })
+    }
+    next()
+}
+
 const getAllToursController = (req, res) => {
     const tours = getAllTours();
+    //console.log(`${req.baseUrl}`)
+    //console.log(`${req.get('USER-AGENT')}`)
     res.status(200).json({
         status: "success",
+        requestedTime: req.requestTime,
         results: tours.length,
         data: { tours }
     });
@@ -67,4 +83,4 @@ const updateTourController = (req, res) => {
     }
 }
 
-export { getAllToursController, getTourByIdController, createTourController, updateTourController, checkBody };
+export { checkID, getAllToursController, getTourByIdController, createTourController, updateTourController, checkBody };
